@@ -37,14 +37,13 @@ class CourierLedgerOriginRepository:
             cur.execute(
                 """
 					WITH temp1  as ( 
-                        	SELECT
+                        				SELECT
 			  
 							fd.courier_id ,
 							ddc.courier_name,
-                            dt."year" AS settlement_year,
-                        	dt."month" AS settlement_month,
-							--EXTRACT(YEAR from (delivery_ts)::timestamp) as settlement_year,
-							--EXTRACT(MONTH from (delivery_ts)::timestamp) as settlement_month,
+ 
+							EXTRACT(YEAR from (delivery_ts)::timestamp) as settlement_year,
+							EXTRACT(MONTH from (delivery_ts)::timestamp) as settlement_month,
 							count(distinct dmo.id) as orders_count,
 							sum(fd.total_sum) as orders_total_sum,
 							avg(fd.rate) as rate_avg,
@@ -63,7 +62,7 @@ class CourierLedgerOriginRepository:
 							LEFT JOIN dds.dm_orders dmo on dmo.order_key=fd.order_id 
 							LEFT JOIN dds.dm_timestamps dt ON dmo.timestamp_id = dt.id
 
-                            GROUP BY   fd.courier_id, ddc.courier_name, dt."year", dt."month" )
+                            GROUP BY   fd.courier_id, ddc.courier_name, settlement_year,settlement_month )
                          	SELECT    temp1.*,
 									(courier_order_sum)*0.05 + (courier_tips_sum)* 0.95 as courier_reward_sum
 							FROM temp1
