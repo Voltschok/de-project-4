@@ -30,25 +30,20 @@ class DeliveryReader:
 	    'offset': offset }
 	 
         increment=requests.get(url, headers=headers, params=params)
+        print(increment.json())
         if increment.json()!=[]:
         	print(last_loaded_id)
+        	print(datetime.fromisoformat((increment.json())[-1]["delivery_ts"]))
         	if datetime.fromisoformat((increment.json())[-1]["delivery_ts"])> last_loaded_id:
-        		offset+=50
+        		
         		self.docs2.extend(increment.json())
-        		self.get_deliveries( 50, datetime.fromisoformat((increment.json())[-1]["delivery_ts"]), offset)
-        	else:
-        		return 0
-            #print(increment.json(), offset)
-            		
-            
-            
+        		
+        	offset+=50
+        	self.get_deliveries( 50, last_loaded_id, offset)
+        		
         else:
-        
-        
-            
-            #print(type(self.docs2))
-            #print(self.docs2)
-            return 0
+        	return 0
+      
         return self.docs2
         
            
