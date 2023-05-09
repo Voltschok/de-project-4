@@ -13,7 +13,7 @@
 |settlement_month|fct_deliveries|deliveries|delivery_ts
 |orders_count|dm_orders	
 |orders_total_sum|fct_deliveries|deliveries|sum
-|rate_avg/fct_deliveries|deliveries|rate
+|rate_avg|fct_deliveries|deliveries|rate
 |order_processing_fee|fct_deliveries|deliveries|sum
 |courier_order_sum|fct_deliveries|deliveries|sum 
 |courier_tips_sum|fct_deliveries|deliveries|tip_sum
