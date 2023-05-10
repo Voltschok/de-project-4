@@ -31,7 +31,7 @@ class DmDeliveryOriginRepository:
             cur.execute(
                 """
 
-			        SELECT
+			SELECT
                         id,
                         delivery::json->>'order_id' as order_id,
                         (delivery::json->>'order_ts')::timestamp as order_ts,
@@ -43,11 +43,11 @@ class DmDeliveryOriginRepository:
                         (delivery::json->>'sum')::numeric(14,2) as sum,
                         (delivery::json->>'tip_sum')::numeric(14,2) as tip_sum
 
-			        FROM stg.deliveries d 
+			FROM stg.deliveries d 
 
-                    WHERE id > %(threshold)s --Пропускаем те объекты, которые уже загрузили.
-                    ORDER BY id ASC --Обязательна сортировка по id, т.к. id используем в качестве курсора.
-                    LIMIT %(limit)s; --Обрабатываем только одну пачку объектов.
+                    	WHERE id > %(threshold)s --Пропускаем те объекты, которые уже загрузили.
+                    	ORDER BY id ASC --Обязательна сортировка по id, т.к. id используем в качестве курсора.
+                    	LIMIT %(limit)s; --Обрабатываем только одну пачку объектов.
                    
                 """, {
                     "threshold": delivery_threshold,
@@ -65,18 +65,17 @@ class DmDeliveryDestRepository:
         with conn.cursor() as cur:
             cur.execute(
                 """
-			INSERT INTO dds.dm_deliveries (id, order_id, order_ts, 
+					INSERT INTO dds.dm_deliveries (id, order_id, order_ts, 
 			            courier_id, delivery_id,  address, delivery_ts, 
                         rate, sum, tip_sum)
                   
-            VALUES (%(id)s, %(order_id)s  ,   %(order_ts)s , %(courier_id)s,
+            		VALUES (%(id)s, %(order_id)s  ,   %(order_ts)s , %(courier_id)s,
                    	 %(delivery_id)s,%(address)s, %(delivery_ts)s, %(rate)s,   %(sum)s, %(tip_sum)s )
-            ON CONFLICT (order_id )
-			DO UPDATE SET 
+            		ON CONFLICT (order_id )
+					DO UPDATE SET 
 			
                     order_ts=EXCLUDED.order_ts,
                     courier_id=EXCLUDED.courier_id,
-                    --order_id=EXCLUDED.order_id,
                     delivery_id=EXCLUDED.delivery_id,
                     address=EXCLUDED.address,
                     delivery_ts=EXCLUDED.delivery_ts,
