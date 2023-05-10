@@ -50,7 +50,7 @@ class DmCourierDestRepository:
                 """
 					INSERT INTO dds.dm_couriers (id, courier_id, courier_name)
 					VALUES (%(id)s, %(courier_id)s  ,   %(courier_name)s   )
-					ON CONFLICT (id )
+					ON CONFLICT (id)
 					DO UPDATE SET
 						courier_id=EXCLUDED.courier_id,
 						courier_name=EXCLUDED.courier_name
