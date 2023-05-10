@@ -36,13 +36,12 @@ class CourierLedgerOriginRepository:
             print(f'Treshold type: {type(threshold["year"])}, {type(threshold["month"])}')
             cur.execute(
                 """
-					WITH temp1  as ( 
-                        				SELECT
+							WITH temp1  as ( 
+                        	SELECT
 			  
 							fd.courier_id ,
 							ddc.courier_name,
- 
-							EXTRACT(YEAR from (delivery_ts)::timestamp) as settlement_year,
+ 							EXTRACT(YEAR from (delivery_ts)::timestamp) as settlement_year,
 							EXTRACT(MONTH from (delivery_ts)::timestamp) as settlement_month,
 							count(distinct dmo.id) as orders_count,
 							sum(fd.total_sum) as orders_total_sum,
@@ -63,15 +62,12 @@ class CourierLedgerOriginRepository:
 							LEFT JOIN dds.dm_timestamps dt ON dmo.timestamp_id = dt.id
 
                             GROUP BY   fd.courier_id, ddc.courier_name, settlement_year,settlement_month )
-                         	SELECT    temp1.*,
-									(courier_order_sum)*0.05 + (courier_tips_sum)* 0.95 as courier_reward_sum
+                         	SELECT   temp1.*,
+								(courier_order_sum)*0.05 + (courier_tips_sum)* 0.95 as courier_reward_sum
 							FROM temp1
-                            WHERE   settlement_year  >= %(year)s AND  settlement_month::int >= %(month)s --Пропускаем те объекты, которые уже загрузили.
-
-     
-                    
-                    -- ORDER BY  id ASC --Обязательна сортировка по id, т.к. id используем в качестве курсора.
-                    LIMIT %(limit)s; --Обрабатываем только одну пачку объектов.
+   
+                   
+                    		LIMIT %(limit)s; --Обрабатываем только одну пачку объектов.
                    
                 """, {
                     "year": threshold['year'],
