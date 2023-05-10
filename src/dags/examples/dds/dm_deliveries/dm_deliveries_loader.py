@@ -67,8 +67,7 @@ class DmDeliveryDestRepository:
                 """
 					INSERT INTO dds.dm_deliveries (id, order_id, order_ts, 
 			            courier_id, delivery_id,  address, delivery_ts, 
-                        rate, sum, tip_sum)
-                  
+                        rate, sum, tip_sum)                  
             		VALUES (%(id)s, %(order_id)s  ,   %(order_ts)s , %(courier_id)s,
                    	 %(delivery_id)s,%(address)s, %(delivery_ts)s, %(rate)s,   %(sum)s, %(tip_sum)s )
             		ON CONFLICT (order_id )
