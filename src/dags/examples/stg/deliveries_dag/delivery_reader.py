@@ -8,7 +8,7 @@ import json
 class DeliveryReader:
     def __init__(self) -> None:
         self.docs = "deliveries"
-        self.docs2=[]
+        self.data=[]
 
     def get_deliveries(self,  limit, last_loaded_id, offset) -> List[Dict]:
         headers = {
@@ -32,19 +32,17 @@ class DeliveryReader:
         increment=requests.get(url, headers=headers, params=params)
         print(increment.json())
         if increment.json()!=[]:
-        	print(last_loaded_id)
-        	print(datetime.fromisoformat((increment.json())[-1]["delivery_ts"]))
         	if datetime.fromisoformat((increment.json())[-1]["delivery_ts"])> last_loaded_id:
         		
-        		self.docs2.extend(increment.json())
-        		
+        		self.data.extend(increment.json())
+       		
         	offset+=50
         	self.get_deliveries( 50, last_loaded_id, offset)
         		
         else:
         	return 0
       
-        return self.docs2
+        return self.data
         
            
         
