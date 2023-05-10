@@ -112,18 +112,12 @@ def sprint5_stg_dag():
 
     order_loader = load_orders()
     
-    @task(task_id="couriers_dag")
+    @task(task_id="load_couriers")
     def load_couriers():
         # Инициализируем класс, в котором реализована логика сохранения.
         pg_saver_couriers = PgSaverCouriers()
         collection_reader=CourierReader()
 
- 
-	# Инициализируем класс, реализующий чтение данных из источника.
-        #collection_reader1 =  requests.get('https://d5d04q7d963eapoepsqr.apigw.yandexcloud.net/couriers', headers=headers, params=params)
-        #collection_reader=collection_reader1.json()
-        #for i in collection_reader:
-       	#	print ( i)
         # Инициализируем класс, в котором реализована бизнес-логика загрузки данных.
         
         loader =CourierLoader(collection_reader, dwh_pg_connect, pg_saver_couriers, log)
@@ -133,19 +127,17 @@ def sprint5_stg_dag():
 
     courier_loader = load_couriers()
     
-    @task(task_id="deliveries_dag")
+    @task(task_id="load_deliveries")
     def load_deliveries():
         # Инициализируем класс, в котором реализована логика сохранения.
         pg_saver_deliveries = PgSaverDeliveries()
 
  
 	# Инициализируем класс, реализующий чтение данных из источника.
- 
-        
         collection_reader3=DeliveryReader()
- 
-        # Инициализируем класс, в котором реализована бизнес-логика загрузки данных.
-        loader =DeliveryLoader(collection_reader3, dwh_pg_connect, pg_saver_deliveries, log)
+	
+	# Инициализируем класс, в котором реализована бизнес-логика загрузки данных.
+	loader =DeliveryLoader(collection_reader3, dwh_pg_connect, pg_saver_deliveries, log)
 
         # Запускаем копирование данных.
         loader.run_copy()
