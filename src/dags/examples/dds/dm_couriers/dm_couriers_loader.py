@@ -24,7 +24,7 @@ class DmCourierOriginRepository:
         with self._db.client().cursor(row_factory=class_row(DmCourierObj)) as cur:
             cur.execute(
                 """
-			        SELECT  id, 
+					SELECT  id, 
                             courier::json->>'_id' as courier_id , 
 			                courier::json->>'name' as courier_name 
 			        FROM stg.couriers 
@@ -49,13 +49,12 @@ class DmCourierDestRepository:
         with conn.cursor() as cur:
             cur.execute(
                 """
-			INSERT INTO dds.dm_couriers (id, courier_id, courier_name)
-                  
-            VALUES (%(id)s, %(courier_id)s  ,   %(courier_name)s   )
-            ON CONFLICT (id )
-			DO UPDATE SET
-			        courier_id=EXCLUDED.courier_id,
-			        courier_name=EXCLUDED.courier_name
+					INSERT INTO dds.dm_couriers (id, courier_id, courier_name)
+					VALUES (%(id)s, %(courier_id)s  ,   %(courier_name)s   )
+					ON CONFLICT (id )
+					DO UPDATE SET
+						courier_id=EXCLUDED.courier_id,
+						courier_name=EXCLUDED.courier_name
 			 
 					""",
                 {
