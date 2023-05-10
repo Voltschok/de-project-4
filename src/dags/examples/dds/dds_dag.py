@@ -97,7 +97,7 @@ def sprint5_dds_dag():
     # Далее задаем последовательность выполнения тасков.
     # Т.к. таск один, просто обозначим его здесь.
     
-    @task(task_id="dm_sales_load")
+    @task(task_id="fct_sales_load")
     def dm_load_sales():
         # создаем экземпляр класса, в котором реализована логика.
         rest_loader = DmSaleLoader(dwh_pg_connect, dwh_pg_connect, log)
