@@ -16,7 +16,7 @@ class CourierLoader:
     _SESSION_LIMIT = 50
     
 
-    WF_KEY = "example_couriersystem_couriers_origin_to_stg_workflow"
+    WF_KEY = "example_couriers_origin_to_stg_workflow"
     LAST_LOADED_TS_KEY = "last_loaded_id"
 
     def __init__(self, collection_loader: CourierReader, pg_dest: PgConnect, pg_saver: PgSaverCouriers, logger: Logger) -> None:
