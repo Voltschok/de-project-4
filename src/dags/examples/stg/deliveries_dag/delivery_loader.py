@@ -16,7 +16,7 @@ class DeliveryLoader:
     
     _SESSION_LIMIT = 50
 
-    WF_KEY = "example_deliverysystem_deliveries_origin_to_stg_workflow"
+    WF_KEY = "example_deliveries_origin_to_stg_workflow"
     LAST_LOADED_TS_KEY = "last_loaded_id"
 
     def __init__(self, collection_loader: DeliveryReader , pg_dest: PgConnect, pg_saver: PgSaverDeliveries, logger: Logger) -> None:
@@ -61,15 +61,9 @@ class DeliveryLoader:
             i = 0
             
             for d in load_queue:
-            
-            	 
-                
-                 
-                print (str(d['delivery_ts']))
-                 
+
                 self.pg_saver.save_object(conn, str(d['delivery_id']) , d["delivery_ts"], d)
                 
-
                 i += 1
                 if i % self._LOG_THRESHOLD == 0:
                     self.log.info(f"processed {i} documents of {len(list(load_queue))} while syncing deliveries.")
