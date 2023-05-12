@@ -66,7 +66,7 @@ class CourierLedgerOriginRepository:
 								(courier_order_sum)*0.05 + (courier_tips_sum)* 0.95 as courier_reward_sum
 							FROM temp1
    
-                   
+                   		WHERE   settlement_year  >= %(year)s AND  settlement_month::int >= %(month)s --Пропускаем те объекты, которые уже загрузили.
                     		LIMIT %(limit)s; --Обрабатываем только одну пачку объектов.
                    
                 """, {
