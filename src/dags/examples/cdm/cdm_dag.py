@@ -48,7 +48,12 @@ def sprint5_cdm_dag():
 
     # Далее задаем последовательность выполнения тасков.
     # Т.к. таск один, просто обозначим его здесь.
-    dm_courier_ledger_dict # type: ignore
+    
+    
+    sensor=ExternalTaskSensor(task_id='dag_sensor_stg_to_dds',
+                        external_dag_id = 'dds_dag',
+                        mode = 'reschedule')    
+    sensor >> dm_courier_ledger_dict # type: ignore
 
 
 
