@@ -157,7 +157,7 @@ def sprint5_dds_dag():
 
     # Далее задаем последовательность выполнения тасков.
     # Т.к. таск один, просто обозначим его здесь
-		sensor=ExternalTaskSensor(task_id='dag_sensor_stg_to_dds',
+    sensor=ExternalTaskSensor(task_id='dag_sensor_stg_to_dds',
                         external_dag_id = 'sprint5_stg_dag',
                         mode = 'reschedule')    
     (sensor
