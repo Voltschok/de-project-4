@@ -1,0 +1,93 @@
+1. dm.courier_ledger -  добавил условие выборки WHERE   settlement_year  >= %(year)s AND  settlement_month::int >= %(month)s
+для расчета только за текущий месяц
+
+2. добавил ExternalTaskSensor в dds_dag.py и cdm_dag.py
+
+3. попробовал реализовать рекомендации в части использования контекста Airflow {{ ds }} для ежеденевной загрузки, 
+но получается, что для выгрузки данных за семь дней нужен отдельный dag?
+
+import requests
+import json
+import psycopg2, psycopg
+import pendulum
+from datetime import datetime, timedelta, date
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
+from airflow.providers.postgres.operators.postgres import PostgresOperator
+from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.hooks.http_hook import HttpHook
+  
+from airflow.sensors.external_task  import ExternalTaskSensor
+
+def get_api_report(date_ts, offset):
+    #подключаемся к API
+    headers = {
+    		'X-Nickname': 'a_wolkov',
+    		'X-Cohort': '12',
+    		'X-API-KEY': '25c27781-8fde-4b30-a22e-524044a7580f',}
+
+        
+    url="https://d5d04q7d963eapoepsqr.apigw.yandexcloud.net/deliveries"
+         
+ 
+    params = {
+	    'restaurant_id': '',
+	    'from': (date.today()-timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S'),
+	    'to': '', # (date.today()-timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S'),
+	    'sort_field': 'delivery_ts',
+	    'sort_direction': 'asc',
+	    'limit': 50,
+	    'offset': offset }
+      
+	 #получаем данные  
+    response=requests.get(url, headers=headers, params=params).json()
+   
+    
+    if response:
+        delivery_ts_str=datetime.fromisoformat(response[-1]["delivery_ts"]).strftime('%Y-%m-%d') 
+        date_ts_str=datetime.fromisoformat(date_ts).strftime('%Y-%m-%d') 
+        delivery_ts_date=datetime.fromisoformat(delivery_ts_str)
+        date_ts_date=datetime.fromisoformat(date_ts_str)
+        
+       #подключаемся к хранилищу
+        conn = psycopg2.connect("dbname=de user=jovyan password=jovyan host=localhost port=5432")
+        print(delivery_ts_date, date_ts_date)
+        cur = conn.cursor()
+        if delivery_ts_date==date_ts_date:
+                    
+            cur.execute(f"DELETE FROM stg.deliveries2 WHERE { delivery_ts_str}={ date_ts_str }")
+            # получаем название колонок
+            columns = ','.join([i for i in response[0]])
+          
+            # SQL запрос на вставку
+            sql = f"INSERT INTO stg.deliveries2 ({ columns }) VALUES %s"
+            # делаем список списков из значений словаря. response - результат get-запроса в JSON формате
+            values = [[value for value in response[i].values()] for i in range(len(response))]
+            psycopg2.extras.execute_values(cur, sql, values)
+            offset+=50
+            conn.commit()
+            get_api_report(date_ts, offset)
+        else:
+            cur.close()
+            conn.close()
+            return 0
+
+
+ts='{{ ds }}'
+with DAG(
+    'stg_deliveries',
+    schedule_interval='@daily',  # Задаем расписание выполнения дага - каждый день
+    start_date=pendulum.datetime(2023, 5, 5, tz="UTC"),  # Дата начала выполнения дага. Можно поставить сегодня.
+    catchup=False,  # Нужно ли запускать даг за предыдущие периоды (с start_date до сегодня) - False (не нужно).
+    tags=['sprint5', 'example', 'stg', 'origin'],  # Теги, используются для фильтрации в интерфейсе Airflow.
+    is_paused_upon_creation=True  # Остановлен/запущен при появлении. Сразу запущен.
+) as dag:
+
+
+    generate_report = PythonOperator(
+        task_id='get_api_report',
+        python_callable=get_api_report,
+        op_kwargs={'date_ts': ts, 
+                   'offset':0})
+ 
+generate_report
