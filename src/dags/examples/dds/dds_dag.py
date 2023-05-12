@@ -12,6 +12,7 @@ from examples.dds.dm_restaurants.dm_restaurants_loader import DmRestaurantLoader
 from examples.dds.dm_products.dm_products_loader import DmProductLoader
 from examples.dds.dm_orders.dm_orders_loader import DmOrderLoader
 from examples.dds.fct_product_sales.fct_product_sales_loader import DmSaleLoader
+from airflow.sensors.external_task  import ExternalTaskSensor
 
 from lib import ConnectionBuilder
 
