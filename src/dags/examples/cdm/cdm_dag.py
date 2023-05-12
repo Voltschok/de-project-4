@@ -52,7 +52,7 @@ def sprint5_cdm_dag():
     
     
     sensor=ExternalTaskSensor(task_id='dag_sensor_stg_to_dds',
-                        external_dag_id = 'dds_dag',
+                        external_dag_id = 'sprint5_dds_dag',
                         mode = 'reschedule')    
     sensor >> dm_reports_dict >> dm_courier_ledger_dict # type: ignore
 
