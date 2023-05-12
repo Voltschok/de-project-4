@@ -51,7 +51,7 @@ def sprint5_cdm_dag():
     # Т.к. таск один, просто обозначим его здесь.
     
     
-    sensor=ExternalTaskSensor(task_id='dag_sensor_stg_to_dds',
+    sensor=ExternalTaskSensor(task_id='dag_sensor_dds_to_cdm',
                         external_dag_id = 'sprint5_dds_dag',
                         mode = 'reschedule')    
     sensor >> dm_reports_dict >> dm_courier_ledger_dict # type: ignore
