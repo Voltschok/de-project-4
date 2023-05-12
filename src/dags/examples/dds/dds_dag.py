@@ -155,9 +155,17 @@ def sprint5_dds_dag():
     fct_deliveries_dict = fct_load_deliveries()
 
     # Далее задаем последовательность выполнения тасков.
-    # Т.к. таск один, просто обозначим его здесь.
-      # type: ignore
-    [dm_times_dict,  dm_users_dict, dm_restaurants_dict, dm_couriers_dict ] >> dm_products_dict >> dm_orders_dict >> dm_deliveries_dict >> dm_sales_dict >> fct_deliveries_dict  
+    # Т.к. таск один, просто обозначим его здесь
+		sensor=ExternalTaskSensor(task_id='dag_sensor_stg_to_dds',
+                        external_dag_id = 'sprint5_stg_dag',
+                        mode = 'reschedule')    
+    (sensor
+		>>[dm_times_dict,  dm_users_dict, dm_restaurants_dict, dm_couriers_dict ] 
+		>> dm_products_dict 
+		>> dm_orders_dict
+		>> dm_deliveries_dict 
+		>> dm_sales_dict 
+		>> fct_deliveries_dict)  
 	     
 	
 dds_dag = sprint5_dds_dag()
