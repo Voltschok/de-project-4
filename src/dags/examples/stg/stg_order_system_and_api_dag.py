@@ -137,10 +137,10 @@ def sprint5_stg_dag():
         collection_reader3=DeliveryReader()
 	
 	# Инициализируем класс, в котором реализована бизнес-логика загрузки данных.
-	loader =DeliveryLoader(collection_reader3, dwh_pg_connect, pg_saver_deliveries, log)
+        loader =DeliveryLoader(collection_reader3, dwh_pg_connect, pg_saver_deliveries, log)
 
         # Запускаем копирование данных
-	loader.run_copy()
+        loader.run_copy()
 
     delivery_loader = load_deliveries()
 
