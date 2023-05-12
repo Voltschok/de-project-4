@@ -5,6 +5,7 @@ from airflow.decorators import dag, task
 from examples.cdm.dm_settlement_report.dm_settlement_report_loader import DmReportLoader
 from examples.cdm.dm_courier_ledger.dm_courier_ledger_loader import CourierLedgerLoader
 from lib import ConnectionBuilder
+from airflow.sensors.external_task  import ExternalTaskSensor
 
 log = logging.getLogger(__name__)
 
